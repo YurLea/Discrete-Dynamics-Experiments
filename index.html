@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Разностное уравнение: x(n+1)=f(x(n))</title>
+
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <!-- CDN: Plotly и math.js (дают глобальные Plotly и math) -->
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjs@12.4.2/lib/browser/math.js"></script>
+</head>
+
+<body>
+<header>
+    <h1>Итерации разностного уравнения: <span class="accent">x(n+1)=f(x(n))</span></h1>
+    <div class="sub">
+        Вводите формулу через <b>x</b> и параметр <b>mu</b> (можно писать также <b>μ</b> — заменится на <b>mu</b>).
+        Степень — <b>^</b>. Пример: <code>mu*x*(1-x)</code>
+    </div>
+</header>
+
+<div class="wrap">
+    <div class="panel">
+        <div class="row">
+            <label for="formula">Формула f(x, mu)</label>
+            <textarea id="formula" spellcheck="false">mu*x*(1-x)</textarea>
+        </div>
+
+        <div class="grid2">
+            <div class="row">
+                <label for="mu">mu</label>
+                <input id="mu" type="number" step="any" value="3.2">
+            </div>
+            <div class="row">
+                <label for="x0">x0</label>
+                <input id="x0" type="number" step="any" value="0.2">
+            </div>
+        </div>
+
+        <div class="grid2">
+            <div class="row">
+                <label for="N">Число итераций N</label>
+                <input id="N" type="number" min="1" step="1" value="40">
+            </div>
+            <div class="row">
+                <label for="samples">Точек для графика f(x)</label>
+                <input id="samples" type="number" min="5" step="1" value="200">
+            </div>
+        </div>
+
+        <div class="grid2">
+            <div class="row">
+                <label for="xmin">Диапазон x (cobweb): xmin</label>
+                <input id="xmin" type="number" step="any" placeholder="авто">
+            </div>
+            <div class="row">
+                <label for="xmax">Диапазон x (cobweb): xmax</label>
+                <input id="xmax" type="number" step="any" placeholder="авто">
+            </div>
+        </div>
+
+        <button id="run">Построить</button>
+        <div id="err" class="err"></div>
+
+        <div class="hint">
+            Поддерживаются функции math.js: <code>sin</code>, <code>cos</code>, <code>exp</code>, <code>log</code>, <code>abs</code> и т.д.<br/>
+            Переменная — <code>x</code>, параметр — <code>mu</code>.
+        </div>
+    </div>
+
+    <div class="plots">
+        <div class="plot plot--square" id="plotCobweb"></div>
+        <div class="plot" id="plotTime"></div>
+    </div>
+</div>
+
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
