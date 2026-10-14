@@ -14,11 +14,6 @@
 
 <body>
 <header>
-    <h1>Итерации разностного уравнения: <span class="accent">x(n+1)=f(x(n))</span></h1>
-    <div class="sub">
-        Вводите формулу через <b>x</b> и параметр <b>mu</b> (можно писать также <b>μ</b> — заменится на <b>mu</b>).
-        Степень — <b>^</b>. Пример: <code>mu*x*(1-x)</code>
-    </div>
 </header>
 
 <div class="wrap">
@@ -52,22 +47,17 @@
 
         <div class="grid2">
             <div class="row">
-                <label for="xmin">Диапазон x (cobweb): xmin</label>
+                <label for="xmin">xmin</label>
                 <input id="xmin" type="number" step="any" placeholder="авто">
             </div>
             <div class="row">
-                <label for="xmax">Диапазон x (cobweb): xmax</label>
+                <label for="xmax">xmax</label>
                 <input id="xmax" type="number" step="any" placeholder="авто">
             </div>
         </div>
 
         <button id="run">Построить</button>
         <div id="err" class="err"></div>
-
-        <div class="hint">
-            Поддерживаются функции math.js: <code>sin</code>, <code>cos</code>, <code>exp</code>, <code>log</code>, <code>abs</code> и т.д.<br/>
-            Переменная — <code>x</code>, параметр — <code>mu</code>.
-        </div>
     </div>
 
     <div class="plots">

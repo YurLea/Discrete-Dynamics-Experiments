@@ -7,12 +7,16 @@ export class PlotManager {
 
         this.config = { responsive: true, displaylogo: false };
 
+        this._resize = (el) => {
+            // resize имеет смысл только когда Plotly уже инициализировал div
+            if (!el) return;
+            if (!el.classList.contains("js-plotly-plot")) return;
+            if (!el._fullLayout) return;
+            Plotly.Plots.resize(el);
+        };
+
         const ro = new ResizeObserver((entries) => {
-            for (const e of entries) {
-                const gd = e.target;
-                if (gd && gd.classList.contains("js-plotly-plot")) continue;
-                Plotly.Plots.resize(gd);
-            }
+            for (const e of entries) this._resize(e.target);
         });
 
         ro.observe(document.getElementById(this.cobwebId));
@@ -21,7 +25,7 @@ export class PlotManager {
 
     async plotCobweb({ f, mu, xs, xmin, xmax, samples, cobwebPath }) {
         const xgrid = linspace(xmin, xmax, samples);
-        const ygrid = xgrid.map(x => f.eval(x, mu));
+        const ygrid = xgrid.map((x) => f.eval(x, mu));
 
         const traceF = {
             type: "scatter",
@@ -29,7 +33,7 @@ export class PlotManager {
             name: "y = f(x)",
             x: xgrid,
             y: ygrid,
-            line: { width: 2, color: "rgba(37, 99, 235, 0.95)" }
+            line: { width: 2, color: "rgba(37, 99, 235, 0.95)" },
         };
 
         const traceDiag = {
@@ -38,7 +42,7 @@ export class PlotManager {
             name: "y = x",
             x: [xmin, xmax],
             y: [xmin, xmax],
-            line: { width: 2, color: "rgba(107, 114, 128, 0.85)", dash: "dash" }
+            line: { width: 2, color: "rgba(107, 114, 128, 0.85)", dash: "dash" },
         };
 
         const traceCob = {
@@ -47,10 +51,11 @@ export class PlotManager {
             name: "Лестница (итерации)",
             x: cobwebPath.cx,
             y: cobwebPath.cy,
-            line: { width: 2, color: "#111827" }
+            line: { width: 2, color: "#111827" },
         };
 
         const layoutCob = {
+            autosize: true,
             title: { text: "Лестница Ламерея: (xₙ, xₙ₊₁)", font: { size: 14 } },
             paper_bgcolor: "rgba(0,0,0,0)",
             plot_bgcolor: "rgba(0,0,0,0)",
@@ -61,7 +66,7 @@ export class PlotManager {
                 range: [xmin, xmax],
                 gridcolor: "rgba(17,24,39,0.10)",
                 zerolinecolor: "rgba(17,24,39,0.18)",
-                constrain: "domain"
+                constrain: "domain",
             },
             yaxis: {
                 title: "xₙ₊₁",
@@ -69,14 +74,17 @@ export class PlotManager {
                 zerolinecolor: "rgba(17,24,39,0.18)",
                 scaleanchor: "x",
                 scaleratio: 1,
-                constrain: "domain"
+                constrain: "domain",
             },
-            font: { color: "#111827" },
 
-            legend: { orientation: "h", y: -0.18 }
+            font: { color: "#111827" },
+            legend: { orientation: "h", y: -0.18 },
         };
 
         await Plotly.newPlot(this.cobwebId, [traceF, traceDiag, traceCob], layoutCob, this.config);
+
+        // важно: после отрисовки принудительно подогнать под контейнер (особенно если CSS менял высоту)
+        requestAnimationFrame(() => this._resize(document.getElementById(this.cobwebId)));
     }
 
     async plotTimeSeries(xs) {
@@ -89,10 +97,11 @@ export class PlotManager {
             x: ngrid,
             y: xs,
             line: { width: 2, color: "#111827" },
-            marker: { size: 6, color: "#111827" }
+            marker: { size: 6, color: "#111827" },
         };
 
         const layoutTime = {
+            autosize: true,
             title: { text: "Зависимость xₙ от n", font: { size: 14 } },
             paper_bgcolor: "rgba(0,0,0,0)",
             plot_bgcolor: "rgba(0,0,0,0)",
@@ -100,17 +109,18 @@ export class PlotManager {
             xaxis: {
                 title: "n",
                 gridcolor: "rgba(17,24,39,0.10)",
-                zerolinecolor: "rgba(17,24,39,0.18)"
+                zerolinecolor: "rgba(17,24,39,0.18)",
             },
             yaxis: {
                 title: "xₙ",
                 gridcolor: "rgba(17,24,39,0.10)",
-                zerolinecolor: "rgba(17,24,39,0.18)"
+                zerolinecolor: "rgba(17,24,39,0.18)",
             },
             font: { color: "#111827" },
-            showlegend: false
+            showlegend: false,
         };
 
         await Plotly.newPlot(this.timeId, [traceTime], layoutTime, this.config);
+        requestAnimationFrame(() => this._resize(document.getElementById(this.timeId)));
     }
 }
